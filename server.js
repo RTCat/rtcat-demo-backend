@@ -2,17 +2,24 @@
 
 var restify = require('restify');
 var server = restify.createServer();
+var socketio = require('socket.io');
+var io = socketio.listen(server.server);
 var port = normalizePort(process.env.PORT || '8080');
+var uuid = require('node-uuid');
+var EventEmitter = require('events');
+var util = require('util');
+
 var RTCat = require('realtimecat-node-sdk');
 var config = require('./config.json');
 var rtcat = new RTCat({apiKey: config.apikey, apiSecret: config.apisecret});
+
+var sockets = [];
+var sessionId = null;
 
 server.use(restify.queryParser());
 server.use(restify.bodyParser());
 restify.CORS.ALLOW_HEADERS.push('Access-Control-Allow-Origin');
 server.use(restify.CORS());
-
-var sessionId = null;
 
 server.get('/sessions', function (req, res, next) {
 
@@ -58,6 +65,7 @@ server.get('/tokens', function (req, res, next) {
 
 
 server.get('/tokens/:sessionId', function (req, res, next) {
+
     var opts = {
         session_id: req.params.sessionId
     };
@@ -70,8 +78,77 @@ server.get('/tokens/:sessionId', function (req, res, next) {
     });
 });
 
+function MyEventHandler() {
+    EventEmitter.call(this);
+}
+
+util.inherits(MyEventHandler, EventEmitter);
+
+var myEvent = new MyEventHandler();
+
+myEvent.on("in", function (data, soc) {
+
+    console.log("here are " + sockets.length);
+
+    if (sockets.length > 0) {
+        var cp_soc = sockets[0];
+        sockets.shift();
+        rtcat.createSession({label: 'demo'}, function (err, resp) {
+
+            var sessionId = resp.uuid;
+            var json = {eventName: "get_token"};
+            var opts = {
+                session_id: sessionId
+            };
+
+            rtcat.createToken(opts, function (err, resp) {
+                var token = resp.uuid;
+                console.log(token);
+                json.token = token;
+                cp_soc.emit("new message", json);
+            });
+
+            rtcat.createToken(opts, function (err, resp) {
+                var token = resp.uuid;
+                console.log(token);
+                json.token = token;
+                soc.emit("new message", json);
+            });
+
+
+        });
+
+    } else {
+        var json = {eventName: "waiting"};
+        soc.emit("new message", json);
+        sockets.push(soc);
+    }
+
+});
+
+io.on('connection', function (socket) {
+
+    socket.id = uuid.v4();
+
+    socket.on("new message", function (message) {
+        var json = JSON.parse(message);
+        var eventName = json.eventName;
+        var content = json.content;
+        console.log(eventName, content);
+        myEvent.emit(eventName, content, socket);
+    });
+
+    socket.on('disconnect', function () {
+        arrayRemove(sockets, socket);
+        console.log('a user leave');
+    });
+
+    console.log('a user connected');
+
+});
+
 server.listen(port, function () {
-    console.log('%s listening at %s', server.name, server.url);
+    console.log('socket.io server listening at %s', server.url);
 });
 
 /**
@@ -93,3 +170,11 @@ function normalizePort(val) {
 
     return false;
 }
+
+function arrayRemove(array, value) {
+    var index = array.indexOf(value);
+    if (index > -1) {
+        array.splice(index, 1);
+    }
+}
+

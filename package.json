@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha -R spec"
   },
   "repository": {
     "type": "git",
@@ -15,7 +15,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "node-uuid": "^1.4.7",
     "realtimecat-node-sdk": "~0.2.1",
-    "restify": "~4.0.4"
+    "restify": "~4.0.4",
+    "socket.io": "^1.4.5"
+  },
+  "devDependencies": {
+    "socket.io-client": "^1.4.5"
   }
 }
