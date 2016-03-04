@@ -22,7 +22,7 @@ server.use(restify.CORS());
 server.get('/tokens/:sessionName', function (req, res, next) {
 
     if (!sessions[req.params.sessionName]) {
-        rtcat.createSession({label: 'demo'}, function (err, resp) {
+        rtcat.createSession({label: req.params.sessionName}, function (err, resp) {
             if (err) return res.json(400, {error: err.message});
             sessions[req.params.sessionName] = resp.uuid;
             var opts = {
