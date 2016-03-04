@@ -12,34 +12,21 @@ var util = require('util');
 var RTCat = require('realtimecat-node-sdk');
 var config = require('./config.json');
 var rtcat = new RTCat({apiKey: config.apikey, apiSecret: config.apisecret});
-
-var sockets = [];
-var sessionId = null;
+var sessions = [];
 
 server.use(restify.queryParser());
 server.use(restify.bodyParser());
 restify.CORS.ALLOW_HEADERS.push('Access-Control-Allow-Origin');
 server.use(restify.CORS());
 
-server.get('/sessions', function (req, res, next) {
+server.get('/tokens/:sessionName', function (req, res, next) {
 
-    rtcat.createSession({label: 'demo'}, function (err, resp) {
-        if (err) {
-            return res.json(400, {error: err.message})
-        }
-        return res.json(200, resp)
-    });
-
-});
-
-server.get('/tokens', function (req, res, next) {
-
-    if (!sessionId) {
+    if (!sessions[req.params.sessionName]) {
         rtcat.createSession({label: 'demo'}, function (err, resp) {
             if (err) return res.json(400, {error: err.message});
-            sessionId = resp.uuid;
+            sessions[req.params.sessionName] = resp.uuid;
             var opts = {
-                session_id: sessionId
+                session_id: sessions[req.params.sessionName]
             };
 
             rtcat.createToken(opts, function (err, resp) {
@@ -52,7 +39,7 @@ server.get('/tokens', function (req, res, next) {
     }
 
     var opts = {
-        session_id: sessionId
+        session_id: sessions[req.params.sessionName]
     };
 
     rtcat.createToken(opts, function (err, resp) {
@@ -61,10 +48,21 @@ server.get('/tokens', function (req, res, next) {
         }
         return res.json(200, resp)
     });
+
 });
 
+server.get('/sessions', function (req, res, next) {
 
-server.get('/tokens/:sessionId', function (req, res, next) {
+    rtcat.createSession({label: 'demo'}, function (err, resp) {
+        if (err) {
+            return res.json(400, {error: err.message})
+        }
+        return res.json(200, resp)
+    });
+
+});
+
+server.get('/:sessionId/tokens', function (req, res, next) {
 
     var opts = {
         session_id: req.params.sessionId
@@ -76,7 +74,10 @@ server.get('/tokens/:sessionId', function (req, res, next) {
         }
         return res.json(200, resp)
     });
+
 });
+
+// ################### Android 1v1 demo backend ####################### //
 
 function MyEventHandler() {
     EventEmitter.call(this);
@@ -84,6 +85,7 @@ function MyEventHandler() {
 
 util.inherits(MyEventHandler, EventEmitter);
 
+var sockets = [];
 var myEvent = new MyEventHandler();
 
 myEvent.on("in", function (data, soc) {

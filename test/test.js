@@ -16,9 +16,7 @@ describe("socket.io test", function () {
 
     beforeEach(function (done) {
 
-        // start the io server
-        server.start();
-        // connect two io clients
+        // connect io clients
         client = io(socketURL, options);
 
         // finish beforeEach setup
