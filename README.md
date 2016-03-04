@@ -1,4 +1,4 @@
-# 实时猫DEMO Backend
+# 实时猫Demo项目后台
 
 用于实时猫Web Demo和Android 1v1 Demo的后端项目, 提供创建Session, 获取Session下token的功能
 
