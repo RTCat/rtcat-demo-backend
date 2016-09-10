@@ -1,6 +1,7 @@
 # [rtcat-demo-web](https://github.com/RTCat/rtcat-demo-web) 后台
 
-[RTCat/rtcat-demo-web](https://github.com/RTCat/rtcat-demo-web)的后端项目, 提供创建Session, 获取Session下token的功能
+[RTCat/rtcat-demo-web](https://github.com/RTCat/rtcat-demo-web)的后端项目, 提供创建Session, 获取Session下token的功能。
+本项目已作为git submodule引入rtcat-demo-web项目。
 
 ## 先决条件
 
