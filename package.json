@@ -1,6 +1,6 @@
 {
   "name": "rtcat-demo-backend",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "",
   "main": "server.js",
   "scripts": {
@@ -15,12 +15,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "node-uuid": "^1.4.7",
-    "realtimecat-node-sdk": "~0.3.1",
-    "restify": "~4.0.4",
-    "socket.io": "^1.4.5"
+    "realtimecat-node-sdk": "^0.4.0",
+    "restify": "^4.0.4"
   },
-  "devDependencies": {
-    "socket.io-client": "^1.4.5"
-  }
+  "devDependencies": {}
 }
