@@ -1,5 +1,5 @@
 {
-  "name": "rtcat-demo-backend",
+  "name": "rtcat-demo-web-backend",
   "version": "0.2.0",
   "description": "",
   "main": "server.js",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/RTCat/rtcat-demo-backend.git"
+    "url": "https://github.com/RTCat/rtcat-demo-web-backend.git"
   },
   "keywords": [],
   "author": "",
