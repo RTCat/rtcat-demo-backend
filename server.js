@@ -14,40 +14,6 @@ server.use(restify.bodyParser());
 restify.CORS.ALLOW_HEADERS.push('Access-Control-Allow-Origin');
 server.use(restify.CORS());
 
-// server.get('/tokens/:sessionName', function (req, res, next) {
-//
-//     if (!sessions[req.params.sessionName]) {
-//         rtcat.createSession({label: req.params.sessionName}, function (err, resp) {
-//
-//             if (err) return res.json(400, {error: err.message});
-//             sessions[req.params.sessionName] = resp.uuid;
-//
-//             var opts = Object.assign({},
-//                 {session_id: sessions[req.params.sessionName]},
-//                 req.query);
-//
-//             rtcat.createToken(opts, function (err, resp) {
-//                 if (err) {
-//                     return res.json(400, {error: err.message})
-//                 }
-//                 return res.json(200, resp)
-//             });
-//         });
-//     }
-//
-//     var opts = Object.assign({},
-//         {session_id: sessions[req.params.sessionName]},
-//         req.query);
-//
-//     rtcat.createToken(opts, function (err, resp) {
-//         if (err) {
-//             return res.json(400, {error: err.message})
-//         }
-//         return res.json(200, resp)
-//     });
-//
-// });
-
 server.get('/tokens/:sessionName', sessionMiddleware, tokenMiddleware);
 
 function sessionMiddleware(req, res, next) {

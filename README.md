@@ -29,7 +29,7 @@
 本项目提供以下接口
 
 ```
-GET /tokens/:sessionName?number={number}&type={type}&
+GET /tokens/:sessionName?number={number}&type={type}
 ```
 
 将sessionName替换为任意名称, 如果不存在该名称的session则新建一个该名称的session,并在该session下创建一个token,
